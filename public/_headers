@@ -1,0 +1,10 @@
+# Same headers the box Caddy vhost sent (HIVE-1438); Pages applies these to every static response.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer-when-downgrade
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
