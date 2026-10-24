@@ -1,7 +1,7 @@
 export function Footer() {
   return (
     <footer className="site-footer">
-      <div>Proxy: http://localhost:8787</div>
+      <div>Data: Mattilsynet, åpne akvakultur-API</div>
       <div>
         <a
           href="https://akvakultur-offentlig-api.fisk.mattilsynet.io/docs/"

@@ -31,16 +31,18 @@ export interface AnleggPage {
 }
 
 export async function fetchAnleggPage(offset: number, limit: number): Promise<AnleggPage> {
-  const url = `/api/fiskehelseregisteret/v1/anlegg?limit=${limit}&offset=${offset}`;
+  // fiskehelseregisteret/v1/anlegg left the open API (401, Maskinporten only); helsestatus/v2/lokaliteter has the
+  // same localities: lokalitetsnummer is the anleggId the cases join on, virksomheter are the owners (HIVE-1438).
+  const url = `/api/helsestatus/v2/lokaliteter?limit=${limit}&offset=${offset}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  type Raw = AnleggBase & { sykdomstilfeller?: unknown; arter?: unknown };
+  type Raw = { lokalitetsnummer: number; lokalitetsnavn: string; produksjonsformer?: string[]; virksomheter?: Eier[] };
   const raw = (await res.json()) as Raw[];
   const items: AnleggBase[] = raw.map((a) => ({
-    anleggId: a.anleggId,
-    anleggNavn: a.anleggNavn,
-    produksjonsform: a.produksjonsform ?? [],
-    eiere: a.eiere ?? [],
+    anleggId: a.lokalitetsnummer,
+    anleggNavn: a.lokalitetsnavn,
+    produksjonsform: a.produksjonsformer ?? [],
+    eiere: (a.virksomheter ?? []).map(({ id, navn }) => ({ id, navn })),
   }));
   const totalHeader = res.headers.get("x-count");
   const total = totalHeader ? Number(totalHeader) : null;
